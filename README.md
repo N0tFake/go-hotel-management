@@ -12,7 +12,12 @@ Hotel room management API
 ## Use
 Remove ```.dist``` from ```app.env.dist``` file to use environment variables.
 
-Excute:
+install [air](https://github.com/cosmtrek/air) to live reload
 ```
-go run cmd/hotel_management/main.go
+go install github.com/cosmtrek/air@latest
+```
+
+Execute:
+```
+air
 ```
