@@ -1,4 +1,4 @@
-package room
+package model_room
 
 import (
 	"time"
@@ -16,4 +16,10 @@ type Room struct {
 	Conta             []sale.Sale   `gorm:"foreignKey:RoomRef"`
 	Reservation_start time.Time
 	Reservation_end   time.Time
+}
+
+type InputRoom struct {
+	Code       string `json:"code" binding:"required"`
+	Tipo       string `json:"tipo" binding:"required"`
+	Number_bed int    `json:"number_bed" binding:"required"`
 }

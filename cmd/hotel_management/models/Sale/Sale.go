@@ -1,4 +1,4 @@
-package sale
+package model_sale
 
 type Sale struct {
 	ID      uint `gorm:"primaryKey"`
