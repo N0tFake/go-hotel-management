@@ -1,7 +1,9 @@
 package model_client
 
+import "gorm.io/gorm"
+
 type Client struct {
-	ID   uint `gorm:"primaryKey"`
+	gorm.Model
 	Name string
 	CPF  string
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	model_account "github.com/N0tFake/go-hotel-management/cmd/hotel_management/models/Account"
 	client "github.com/N0tFake/go-hotel-management/cmd/hotel_management/models/Client"
 	room "github.com/N0tFake/go-hotel-management/cmd/hotel_management/models/Room"
 	sale "github.com/N0tFake/go-hotel-management/cmd/hotel_management/models/Sale"
@@ -37,7 +38,7 @@ func ConnectDatabase(config *initializers.Config) {
 
 	log.Println("> Connecting to the database")
 
-	err = db.AutoMigrate(&room.Room{}, &client.Client{}, &sale.Sale{})
+	err = db.AutoMigrate(&room.Room{}, &client.Client{}, &sale.Sale{}, &model_account.Account{})
 	if err != nil {
 		panic("Error migrating")
 	}
