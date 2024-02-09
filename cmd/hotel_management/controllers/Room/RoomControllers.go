@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Link a client to a room
 func LinkClientToRoom(c *gin.Context) {
 	var input model_room.InputLinkClient
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -49,10 +50,26 @@ func LinkClientToRoom(c *gin.Context) {
 
 }
 
+// Get All rooms
 func GetAllRooms(c *gin.Context) {
 	var rooms []model_room.Room
 	service.DB.Find(&rooms)
-	c.JSON(http.StatusOK, gin.H{"rooms": rooms})
+
+	var output []map[string]interface{}
+	for _, room := range rooms {
+		output = append(output, map[string]interface{}{
+			"code":              room.Code,
+			"type-room":         room.Tipo,
+			"number-bed":        room.Number_bed,
+			"client":            room.Client,
+			"account":           room.Account,
+			"reservation-start": room.Reservation_start,
+			"reservation-end":   room.Reservation_end,
+			"reserved":          room.Reserved,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"rooms": output})
 }
 
 func GetRoomByID(c *gin.Context) {
