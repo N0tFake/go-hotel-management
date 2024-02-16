@@ -61,8 +61,8 @@ func GetAllRooms(c *gin.Context) {
 			"code":              room.Code,
 			"type-room":         room.Tipo,
 			"number-bed":        room.Number_bed,
-			"client":            room.Client,
-			"account":           room.Account,
+			"client":            room.ClientID,
+			"account":           room.AccountID,
 			"reservation-start": room.Reservation_start,
 			"reservation-end":   room.Reservation_end,
 			"reserved":          room.Reserved,
@@ -72,6 +72,7 @@ func GetAllRooms(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"rooms": output})
 }
 
+// Get Room by ID
 func GetRoomByID(c *gin.Context) {
 	var room model_room.Room
 
@@ -80,9 +81,44 @@ func GetRoomByID(c *gin.Context) {
 		return
 	}
 
-	service.DB.Preload("Clients").First(&room)
+	// service.DB.Preload("Clients").First(&room)
 
-	c.JSON(http.StatusOK, gin.H{"room": room})
+	// var client model_client.Client
+	// if err := service.DB.Where("id = ?", room.ClientID).First(&client).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Client not found"})
+	// 	return
+	// }
+	// client_data := map[string]interface{}{
+	// 	"ID":   client.ID,
+	// 	"name": client.Name,
+	// 	"cpf":  client.CPF,
+	// }
+
+	// var account model_account.Account
+	// if err := service.DB.Where("id = ?", room.AccountID).First(&account).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Account not found"})
+	// 	return
+	// }
+	// service.DB.Preload("Orders").Find(&account)
+	// account_data := map[string]interface{}{
+	// 	"ID":      account.ID,
+	// 	"Orders":  account.Orders,
+	// 	"PaidOut": account.PaidOut,
+	// 	"Total":   account.Total,
+	// }
+
+	output := map[string]interface{}{
+		"code":              room.Code,
+		"type-room":         room.Tipo,
+		"number-bed":        room.Number_bed,
+		"client":            room.ClientID,
+		"account":           room.AccountID,
+		"reservation-start": room.Reservation_start,
+		"reservation-end":   room.Reservation_end,
+		"reserved":          room.Reserved,
+	}
+
+	c.JSON(http.StatusOK, gin.H{"room": output})
 }
 
 func CreateRoom(c *gin.Context) {
@@ -104,5 +140,36 @@ func CreateRoom(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusOK, gin.H{"data": room})
+}
+
+// Check Out
+// Close the account
+// ! Terminar o Checkout
+// ! Remover o Client, as Data de Reserva e atribuir como False o reserved
+func CloseAccountCheckOut(c *gin.Context) {
+	var room model_room.Room
+
+	if err := service.DB.Preload("Account").First(&room, c.Param("id")).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Room not found"})
+		return
+	}
+
+	room.Account.PaidOut = true
+	if err := service.DB.Model(&room).Updates(room).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	service.DB.Save(room.Account)
+
+	room.AccountID = nil
+	room.Account = nil
+	if err := service.DB.Model(&room).Updates(room).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	service.DB.Save(&room)
+
+	// room.Account = nil
 	c.JSON(http.StatusOK, gin.H{"data": room})
 }

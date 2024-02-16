@@ -37,7 +37,9 @@ func GetAccountByCPF(c *gin.Context) {
 
 }
 
-func CreateAccount(c *gin.Context) {
+// Check In
+// Create a new account to room
+func CreateAccountCheckIn(c *gin.Context) {
 	var input model_account.InputCreateAccount
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -65,6 +67,13 @@ func CreateAccount(c *gin.Context) {
 	}
 
 	service.DB.Create(&account)
+
+	room.Account = &account
+	if err := service.DB.Model(&room).Updates(room).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	service.DB.Save(&room)
 
 	c.JSON(http.StatusOK, gin.H{"data": account})
 }

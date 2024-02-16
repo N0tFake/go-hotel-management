@@ -22,13 +22,14 @@ func SetupRouter() *gin.Engine {
 	r.POST("/create/room", room_controllers.CreateRoom)
 
 	r.POST("/link/client/room/", room_controllers.LinkClientToRoom)
+	r.GET("/room/:id/checkout/", room_controllers.CloseAccountCheckOut)
 
 	r.GET("/clients", client_controller.GetAllClients)
 	r.POST("/create/client", client_controller.CreateClient)
 	r.POST("/client/cpf", client_controller.GetClientByCPF)
 
 	r.POST("/account", account_controller.GetAccountByCPF)
-	r.POST("/create/account", account_controller.CreateAccount)
+	r.POST("/checkin", account_controller.CreateAccountCheckIn)
 
 	r.POST("/add/sale", sale_controller.AddOrderOnAccount)
 

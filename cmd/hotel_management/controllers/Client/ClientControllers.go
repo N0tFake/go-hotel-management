@@ -1,7 +1,6 @@
 package client_controller
 
 import (
-	"log"
 	"net/http"
 
 	model_client "github.com/N0tFake/go-hotel-management/cmd/hotel_management/models/Client"
@@ -44,8 +43,6 @@ func CreateClient(c *gin.Context) {
 		Name: input.Name,
 		CPF:  input.CPF,
 	}
-
-	log.Println(client)
 
 	resutl := service.DB.Create(&client)
 	if resutl.Error != nil {
